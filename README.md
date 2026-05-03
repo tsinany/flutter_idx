@@ -1,4 +1,4 @@
-# myapp
+# scoutPractice
 
 A new Flutter project.
 
