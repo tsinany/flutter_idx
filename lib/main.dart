@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -11,28 +14,30 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // TRY THIS: Try running your application with "flutter run". You'll see
+          // the application has a purple toolbar. Then, without quitting the app,
+          // try changing the seedColor in the colorScheme below to Colors.green
+          // and then invoke "hot reload" (save your changes or press the "hot
+          // reload" button in a Flutter-supported IDE, or press "r" if you used
+          // the command line to start the app).
+          //
+          // Notice that the counter didn't reset back to zero; the application
+          // state is not lost during the reload. To reset the state, use hot
+          // restart instead.
+          //
+          // This works for code too, not just values: Most code changes can be
+          // tested with just a hot reload.
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 0, 0)),
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(
+          title: 'Hello',
+        ));
   }
 }
 
@@ -56,6 +61,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String name = "Hello World!";
+  double _oprs = 0;
 
   void _incrementCounter() {
     setState(() {
@@ -66,6 +73,57 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter--;
+    });
+  }
+
+  void _showText() {
+    setState(() {
+      name = myController.text;
+    });
+  }
+
+  final urlTBA2025qcmoOprs = 'https://www.thebluealliance.com/api/v3/event/2025qcmo/oprs';
+  final authHead = 'X-TBA-Auth-Key';
+  final authKey = 'wUpYt6ekHeoC77n2OEkIO4k9nKmx2E8IeWHLyl0aCMcPtg3zFA8p7CYQveGbkFiI';
+
+  void _doNothing() async {
+    String urlRequest = urlTBA2025qcmoOprs;
+
+    final TBAResponse = await http.get(
+      Uri.parse(urlRequest),
+      headers: {
+        authHead: authKey,
+      },
+    );
+
+      print(TBAResponse);
+      print(TBAResponse.body);
+
+      //if (TBAResponse.body.length > 3) {
+
+        //List<dynamic> jsonReponse = jsonDecode(TBAResponse.body);
+
+        //jsonResponse.sort
+
+      //}
+  }
+
+  final myController = TextEditingController();
+
+  @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,7 +142,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+        ),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -105,13 +166,29 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+            //const Image(image: AssetImage('web/icons/Icon-192.png')),
+            //Image.asset('web/icons/Icon-192.png'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            ElevatedButton(
+                onPressed: _decrementCounter, child: Icon(Icons.remove)),
+            ElevatedButton(
+                onPressed: _showText, child: Icon(Icons.local_airport)),
+            ElevatedButton(onPressed: _doNothing, child: Icon(Icons.add_call)),
+            Text(
+              '$_oprs',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(name),
+            TextField(
+              controller: myController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter a text',
+              ),
+            )
           ],
         ),
       ),
@@ -119,7 +196,12 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      //floatingActionButton: FloatingActionButton(
+      //onPressed: _doNothing,
+      //tooltip: 'Do Nothing',
+      //child: const Icon(Icon.add),
+      //) // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
